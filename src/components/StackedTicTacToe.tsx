@@ -19,12 +19,13 @@ const StackedTicTacToe: React.FC = () => {
   const [currentPlayer, setCurrentPlayer] = useState<'X' | 'O'>('X');
   const [winner, setWinner] = useState<Player>(null);
   const [scoreBoard, setScoreBoard] = useState<ScoreBoard>({ Player1: 0, Player2: 0, Tie: 0 });
-  const [playerNames, setPlayerNames] = useState<{Player1: string, Player2: string}>({ Player1: '', Player2: '' });
+  const [playerNames, setPlayerNames] = useState<{Player1: string, Player2: string}>({ Player1: 'Cosmic Carl', Player2: 'Galactic Gary' });
   const [gameResults, setGameResults] = useState<GameResult[]>([]);
-  const [gameStarted, setGameStarted] = useState(false);
+  const [gameStarted, setGameStarted] = useState(true);
   const [player1IsX, setPlayer1IsX] = useState(true);
 
   const handleSubGameWin = (index: number, result: Player) => {
+    console.log(`SubGame ${index} result:`, result);
     const newMainBoard = [...mainBoard];
     newMainBoard[index] = result;
     setMainBoard(newMainBoard);
@@ -36,18 +37,14 @@ const StackedTicTacToe: React.FC = () => {
 
   const checkWinner = (board: BoardState): Player => {
     const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6],
     ];
 
     for (const [a, b, c] of lines) {
       if (board[a] && board[a] !== 'Tie' && board[a] === board[b] && board[a] === board[c]) {
+        console.log(`Main game winner found: ${board[a]}`);
         return board[a];
       }
     }
@@ -63,14 +60,9 @@ const StackedTicTacToe: React.FC = () => {
     if (checkWinner(board)) return true;
     
     const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6],
     ];
 
     for (const [a, b, c] of lines) {
@@ -84,13 +76,21 @@ const StackedTicTacToe: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log("Main board updated:", mainBoard);
     const gameWinner = checkWinner(mainBoard);
     if (gameWinner) {
+      console.log("Game winner:", gameWinner);
       setWinner(gameWinner);
       const winningPlayer = gameWinner === 'X' ? (player1IsX ? 'Player1' : 'Player2') : (player1IsX ? 'Player2' : 'Player1');
       setScoreBoard(prev => ({ ...prev, [winningPlayer]: prev[winningPlayer] + 1 }));
       setGameResults(prev => [...prev, { winner: playerNames[winningPlayer], date: new Date().toLocaleString() }]);
-    } else if (isMainBoardFull(mainBoard) || !canWinOrTie(mainBoard)) {
+    } else if (isMainBoardFull(mainBoard)) {
+      console.log("Game is a tie (board full)");
+      setWinner('Tie');
+      setScoreBoard(prev => ({ ...prev, Tie: prev.Tie + 1 }));
+      setGameResults(prev => [...prev, { winner: 'Tie', date: new Date().toLocaleString() }]);
+    } else if (!canWinOrTie(mainBoard)) {
+      console.log("Game is a tie (no possible wins)");
       setWinner('Tie');
       setScoreBoard(prev => ({ ...prev, Tie: prev.Tie + 1 }));
       setGameResults(prev => [...prev, { winner: 'Tie', date: new Date().toLocaleString() }]);
@@ -101,38 +101,8 @@ const StackedTicTacToe: React.FC = () => {
     setMainBoard(Array(9).fill(null));
     setCurrentPlayer('X');
     setWinner(null);
-    setPlayer1IsX(!player1IsX); // Rotate X and O between players
+    setPlayer1IsX(!player1IsX);
   };
-
-  const startGame = () => {
-    if (playerNames.Player1 && playerNames.Player2) {
-      setGameStarted(true);
-      resetGame();
-    } else {
-      alert("Please enter names for both players!");
-    }
-  };
-
-  if (!gameStarted) {
-    return (
-      <div className="player-setup">
-        <h1>Stacked Tic-Tac-Toe</h1>
-        <input 
-          type="text" 
-          placeholder="Player 1 Name" 
-          value={playerNames.Player1} 
-          onChange={(e) => setPlayerNames(prev => ({ ...prev, Player1: e.target.value }))}
-        />
-        <input 
-          type="text" 
-          placeholder="Player 2 Name" 
-          value={playerNames.Player2} 
-          onChange={(e) => setPlayerNames(prev => ({ ...prev, Player2: e.target.value }))}
-        />
-        <button onClick={startGame}>Start Game</button>
-      </div>
-    );
-  }
 
   const currentPlayerName = currentPlayer === 'X' ? 
     (player1IsX ? playerNames.Player1 : playerNames.Player2) : 
@@ -162,7 +132,7 @@ const StackedTicTacToe: React.FC = () => {
           </div>
         ))}
       </div>
-      {winner && <h2>Game Result: {winner === 'Tie' ? 'Tie Game' : `Winner: ${currentPlayerName}`}</h2>}
+      {winner && <h2>Game Result: {winner === 'Tie' ? 'Tie Game' : `Winner: ${winner === 'X' ? (player1IsX ? playerNames.Player1 : playerNames.Player2) : (player1IsX ? playerNames.Player2 : playerNames.Player1)}`}</h2>}
       <p>Current Player: {currentPlayerName} ({currentPlayer})</p>
       <button onClick={resetGame} className="reset-button">New Game</button>
       <div className="results-table">

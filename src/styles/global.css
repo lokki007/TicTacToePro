@@ -1,3 +1,30 @@
+body {
+  background-color: #0a0a2a; /* Dark blue background */
+  background-image:
+    radial-gradient(rgba(255,255,255,0.3), rgba(255,255,255,.1) 2px, transparent 40px),
+    radial-gradient(rgba(255,255,255,0.2), rgba(255,255,255,.1) 1px, transparent 30px),
+    radial-gradient(rgba(255,255,255,0.2), rgba(255,255,255,.1) 2px, transparent 40px),
+    radial-gradient(rgba(255,255,255,0.3), rgba(255,255,255,.1) 2px, transparent 30px);
+  background-size: 550px 550px, 350px 350px, 250px 250px, 150px 150px;
+  background-position: 0 0, 40px 60px, 130px 270px, 70px 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  overflow: hidden;
+  color: #ffffff; /* White text color for better visibility */
+}
+
+#__next {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+}
+
 .stacked-tictactoe {
   display: flex;
   flex-direction: column;
@@ -14,10 +41,11 @@
 .sub-game {
   width: 150px;
   height: 150px;
-  border: 2px solid #333;
+  border: 2px solid #4a4a7f; /* Lighter border color */
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: rgba(255, 255, 255, 0.1); /* Slightly visible background */
 }
 
 .sub-board {
@@ -33,21 +61,22 @@
   height: 46px;
   font-size: 24px;
   font-weight: bold;
-  background: none;
-  border: 1px solid #ccc;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #6a6a9f; /* Lighter border color */
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0;
+  color: #ffffff; /* White text color */
 }
 
 .cell:nth-child(even) {
-  color: #0000FF; /* Blue for X */
+  color: #00ffff; /* Cyan for X */
 }
 
 .cell:nth-child(odd) {
-  color: #FF0000; /* Red for O */
+  color: #ff00ff; /* Magenta for O */
 }
 
 .winner {
@@ -58,6 +87,7 @@
   height: 100%;
   font-size: 48px;
   font-weight: bold;
+  color: #ffff00; /* Yellow color for winner */
 }
 
 .reset-button {
@@ -77,16 +107,16 @@
 
 .cell:disabled {
   cursor: not-allowed;
-  opacity: 0.8; /* Increased opacity */
-  color: #333; /* Darker color for disabled state */
+  opacity: 0.5;
+  color: #888; /* Lighter color for disabled state */
 }
 
 .cell[disabled="false"]:hover {
-  background-color: #f0f0f0;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .cell[disabled="false"]:active {
-  background-color: #e0e0e0;
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .tie-overlay {
@@ -98,7 +128,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   color: white;
   font-size: 24px;
   font-weight: bold;
@@ -106,7 +136,7 @@
 
 .winner.tie {
   font-size: 36px;
-  color: #888;
+  color: #ffff00; /* Yellow color for tie */
 }
 
 .scoreboard {
@@ -116,7 +146,7 @@
   max-width: 300px;
   margin: 20px auto;
   padding: 10px;
-  background-color: #f0f0f0;
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
   font-size: 18px;
   font-weight: bold;
@@ -137,6 +167,9 @@
 .player-setup input {
   padding: 5px;
   font-size: 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid #6a6a9f;
+  color: #ffffff;
 }
 
 .player-setup button {
@@ -165,12 +198,12 @@
 }
 
 .results-table th, .results-table td {
-  border: 1px solid #ddd;
+  border: 1px solid #6a6a9f;
   padding: 8px;
   text-align: left;
 }
 
 .results-table th {
-  background-color: #f2f2f2;
+  background-color: rgba(255, 255, 255, 0.1);
   font-weight: bold;
 }
