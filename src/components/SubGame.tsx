@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 type Player = 'X' | 'O' | 'Tie' | null;
 type BoardState = Player[];
@@ -12,6 +12,13 @@ interface SubGameProps {
 
 const SubGame: React.FC<SubGameProps> = ({ onWin, onMove, currentPlayer, disabled }) => {
   const [board, setBoard] = useState<BoardState>(Array(9).fill(null));
+
+  useEffect(() => {
+    if (!disabled) {
+      // Reset the sub-game board when a new game starts
+      setBoard(Array(9).fill(null));
+    }
+  }, [disabled]);
 
   const checkWinner = (board: BoardState): Player => {
     const lines = [

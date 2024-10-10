@@ -18,8 +18,8 @@ function TicTacToe() {
     const [board, setBoard] = useState<(string | null)[]>(Array(9).fill(null));
     const [currentPlayer, setCurrentPlayer] = useState<'X' | 'O'>('X');
     const [winner, setWinner] = useState<string | null>(null);
-    const player1 = "Cosmic Carl";
-    const player2 = "Galactic Gary";
+    const player1 = "Potato";
+    const player2 = "Tomato";
 
     const handleClick = (index: number) => {
         if (board[index] || winner) return;

@@ -19,7 +19,7 @@ const StackedTicTacToe: React.FC = () => {
   const [currentPlayer, setCurrentPlayer] = useState<'X' | 'O'>('X');
   const [winner, setWinner] = useState<Player>(null);
   const [scoreBoard, setScoreBoard] = useState<ScoreBoard>({ Player1: 0, Player2: 0, Tie: 0 });
-  const [playerNames, setPlayerNames] = useState<{Player1: string, Player2: string}>({ Player1: 'Cosmic Carl', Player2: 'Galactic Gary' });
+  const [playerNames, setPlayerNames] = useState<{Player1: string, Player2: string}>({ Player1: 'Potato', Player2: 'Tomato' });
   const [gameResults, setGameResults] = useState<GameResult[]>([]);
   const [gameStarted, setGameStarted] = useState(true);
   const [player1IsX, setPlayer1IsX] = useState(true);
@@ -57,8 +57,6 @@ const StackedTicTacToe: React.FC = () => {
   };
 
   const canWinOrTie = (board: BoardState): boolean => {
-    if (checkWinner(board)) return true;
-    
     const lines = [
       [0, 1, 2], [3, 4, 5], [6, 7, 8],
       [0, 3, 6], [1, 4, 7], [2, 5, 8],
@@ -67,12 +65,15 @@ const StackedTicTacToe: React.FC = () => {
 
     for (const [a, b, c] of lines) {
       const lineValues = [board[a], board[b], board[c]];
-      if (!lineValues.includes('X') && !lineValues.includes('O')) {
-        return true;
+      if (
+        (lineValues.filter(v => v === 'X' || v === null).length === 3) ||
+        (lineValues.filter(v => v === 'O' || v === null).length === 3)
+      ) {
+        return true; // There's still a chance to win
       }
     }
 
-    return false;
+    return false; // No chance to win, it's a tie
   };
 
   useEffect(() => {
@@ -82,26 +83,40 @@ const StackedTicTacToe: React.FC = () => {
       console.log("Game winner:", gameWinner);
       setWinner(gameWinner);
       const winningPlayer = gameWinner === 'X' ? (player1IsX ? 'Player1' : 'Player2') : (player1IsX ? 'Player2' : 'Player1');
-      setScoreBoard(prev => ({ ...prev, [winningPlayer]: prev[winningPlayer] + 1 }));
-      setGameResults(prev => [...prev, { winner: playerNames[winningPlayer], date: new Date().toLocaleString() }]);
-    } else if (isMainBoardFull(mainBoard)) {
-      console.log("Game is a tie (board full)");
+      setScoreBoard(prev => {
+        const newScore = { ...prev, [winningPlayer]: prev[winningPlayer] + 1 };
+        console.log("Updated scoreboard:", newScore);
+        return newScore;
+      });
+      setGameResults(prev => {
+        const newResults = [...prev, { winner: playerNames[winningPlayer], date: new Date().toLocaleString() }];
+        console.log("Updated game results:", newResults);
+        return newResults;
+      });
+    } else if (isMainBoardFull(mainBoard) || !canWinOrTie(mainBoard)) {
+      console.log("Game is a tie");
       setWinner('Tie');
-      setScoreBoard(prev => ({ ...prev, Tie: prev.Tie + 1 }));
-      setGameResults(prev => [...prev, { winner: 'Tie', date: new Date().toLocaleString() }]);
-    } else if (!canWinOrTie(mainBoard)) {
-      console.log("Game is a tie (no possible wins)");
-      setWinner('Tie');
-      setScoreBoard(prev => ({ ...prev, Tie: prev.Tie + 1 }));
-      setGameResults(prev => [...prev, { winner: 'Tie', date: new Date().toLocaleString() }]);
+      setScoreBoard(prev => {
+        const newScore = { ...prev, Tie: prev.Tie + 1 };
+        console.log("Updated scoreboard:", newScore);
+        return newScore;
+      });
+      setGameResults(prev => {
+        const newResults = [...prev, { winner: 'Tie', date: new Date().toLocaleString() }];
+        console.log("Updated game results:", newResults);
+        return newResults;
+      });
     }
-  }, [mainBoard]);
+  }, [mainBoard, player1IsX, playerNames]);
 
   const resetGame = () => {
+    console.log("Resetting game");
     setMainBoard(Array(9).fill(null));
     setCurrentPlayer('X');
     setWinner(null);
     setPlayer1IsX(!player1IsX);
+    setScoreBoard({ Player1: 0, Player2: 0, Tie: 0 });
+    setGameResults([]);
   };
 
   const currentPlayerName = currentPlayer === 'X' ? 
@@ -135,25 +150,27 @@ const StackedTicTacToe: React.FC = () => {
       {winner && <h2>Game Result: {winner === 'Tie' ? 'Tie Game' : `Winner: ${winner === 'X' ? (player1IsX ? playerNames.Player1 : playerNames.Player2) : (player1IsX ? playerNames.Player2 : playerNames.Player1)}`}</h2>}
       <p>Current Player: {currentPlayerName} ({currentPlayer})</p>
       <button onClick={resetGame} className="reset-button">New Game</button>
-      <div className="results-table">
-        <h3>Game Results</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Winner</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {gameResults.map((result, index) => (
-              <tr key={index}>
-                <td>{result.winner}</td>
-                <td>{result.date}</td>
+      {gameResults.length > 0 && (
+        <div className="results-table">
+          <h3>Game Results</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Winner</th>
+                <th>Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {gameResults.map((result, index) => (
+                <tr key={index}>
+                  <td>{result.winner}</td>
+                  <td>{result.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };
